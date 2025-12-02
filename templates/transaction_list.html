@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">{{ title }}</h2>
+    <a href="{% url 'dashboard' %}" class="text-blue-600 hover:underline">Back to Dashboard</a>
+</div>
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate__animated animate__fadeInUp">
+    {% if transactions %}
+    <div class="divide-y divide-gray-50">
+        {% for t in transactions %}
+        <div class="p-4 hover:bg-gray-50 transition flex items-center justify-between group">
+            <div class="flex items-center space-x-4">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center 
+                    {% if t.transaction_type == 'INCOME' %} bg-green-100 text-green-600 {% else %} bg-red-100 text-red-600 {% endif %}">
+                    <i class="fa-solid {% if t.transaction_type == 'INCOME' %}fa-arrow-down{% else %}fa-arrow-up{% endif %}"></i>
+                </div>
+                <div>
+                    <p class="font-bold text-gray-800">{{ t.title }}</p>
+                    <div class="text-xs text-gray-400">{{ t.date }} • {{ t.category.name|default:"Uncategorized" }}</div>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="font-bold {% if t.transaction_type == 'INCOME' %} text-green-600 {% else %} text-red-500 {% endif %}">
+                    {{ user.userprofile.currency }} {{ t.amount }}
+                </span>
+                <div class="flex space-x-2">
+                    <a href="{% url 'edit_transaction' t.id %}" class="text-gray-400 hover:text-blue-600 p-2 bg-gray-100 rounded-lg"><i class="fa-solid fa-pen"></i></a>
+                    <form action="{% url 'delete_transaction' t.id %}" method="post" onsubmit="return confirm('Delete?');" class="inline">
+                        {% csrf_token %}
+                        <button class="text-gray-400 hover:text-red-600 p-2 bg-gray-100 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="p-12 text-center text-gray-400">
+        <div class="mb-4 text-4xl text-gray-200"><i class="fa-regular fa-folder-open"></i></div>
+        <p class="mb-4">No {{ title|lower }} found.</p>
+        <a href="{% url 'add_transaction' %}" class="text-blue-600 font-bold hover:underline">Add a transaction</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

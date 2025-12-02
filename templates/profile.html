@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+    
+    <!-- Settings & Personal Info -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Personal Info -->
+        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 animate__animated animate__fadeInLeft">
+            <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                <i class="fa-solid fa-id-card mr-3 text-blue-600"></i> Account
+            </h2>
+            <div class="space-y-4">
+                <div class="p-3 bg-gray-50 rounded-lg">
+                    <p class="text-xs font-bold text-gray-500 uppercase mb-1">Username</p>
+                    <p class="text-base font-medium text-gray-900">{{ user.username }}</p>
+                </div>
+                <div class="p-3 bg-gray-50 rounded-lg">
+                    <p class="text-xs font-bold text-gray-500 uppercase mb-1">Email</p>
+                    <p class="text-base font-medium text-gray-900">{{ user.email }}</p>
+                </div>
+                <div class="p-3 bg-gray-50 rounded-lg">
+                    <p class="text-xs font-bold text-gray-500 uppercase mb-1">Joined</p>
+                    <p class="text-base font-medium text-gray-900">{{ user.date_joined|date:"F j, Y" }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings (Currency) -->
+        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 animate__animated animate__fadeInRight">
+            <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                <i class="fa-solid fa-gear mr-3 text-gray-600"></i> Settings
+            </h2>
+            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 mb-6">
+                <p class="text-sm text-blue-800 font-medium">Preferred Currency</p>
+                <p class="text-xs text-blue-600 mt-1">This will update symbols across the entire dashboard.</p>
+            </div>
+            
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                <div class="grid grid-cols-3 gap-3">
+                    <!-- Option: Ft -->
+                    <label class="cursor-pointer">
+                        <input type="radio" name="currency" value="Ft" class="peer sr-only" {% if user.userprofile.currency == 'Ft' %}checked{% endif %}>
+                        <div class="p-3 rounded-lg border-2 border-gray-200 text-center peer-checked:border-blue-500 peer-checked:bg-blue-50 transition hover:bg-gray-50">
+                            <div class="text-lg font-bold text-gray-700 peer-checked:text-blue-700">Ft</div>
+                            <div class="text-xs text-gray-500">HUF</div>
+                        </div>
+                    </label>
+
+                    <!-- Option: $ -->
+                    <label class="cursor-pointer">
+                        <input type="radio" name="currency" value="$" class="peer sr-only" {% if user.userprofile.currency == '$' %}checked{% endif %}>
+                        <div class="p-3 rounded-lg border-2 border-gray-200 text-center peer-checked:border-blue-500 peer-checked:bg-blue-50 transition hover:bg-gray-50">
+                            <div class="text-lg font-bold text-gray-700 peer-checked:text-blue-700">$</div>
+                            <div class="text-xs text-gray-500">USD</div>
+                        </div>
+                    </label>
+
+                    <!-- Option: € -->
+                    <label class="cursor-pointer">
+                        <input type="radio" name="currency" value="€" class="peer sr-only" {% if user.userprofile.currency == '€' %}checked{% endif %}>
+                        <div class="p-3 rounded-lg border-2 border-gray-200 text-center peer-checked:border-blue-500 peer-checked:bg-blue-50 transition hover:bg-gray-50">
+                            <div class="text-lg font-bold text-gray-700 peer-checked:text-blue-700">€</div>
+                            <div class="text-xs text-gray-500">EUR</div>
+                        </div>
+                    </label>
+                </div>
+                <button type="submit" class="w-full bg-gray-800 text-white py-2.5 rounded-lg hover:bg-gray-900 transition shadow-md font-bold text-sm mt-4">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Categories List -->
+    <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                <i class="fa-solid fa-tags mr-3 text-purple-600"></i> My Categories
+            </h2>
+            <a href="{% url 'manage_categories' %}" class="text-sm font-bold text-blue-600 hover:text-blue-800 hover:underline">Manage Categories</a>
+        </div>
+        
+        {% if categories %}
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {% for cat in categories %}
+            <div class="flex items-center p-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-purple-200 transition">
+                <div class="h-8 w-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mr-3 font-bold text-xs">
+                    {{ forloop.counter }}
+                </div>
+                <span class="text-sm font-medium text-gray-700 truncate">{{ cat.name }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-8 text-gray-400">
+            No categories found.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

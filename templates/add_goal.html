@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="flex justify-center items-center h-[calc(100vh-140px)]">
+    <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-sm border border-gray-100 animate__animated animate__fadeInUp">
+        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">
+            {% if is_edit %}Edit Goal{% else %}New Saving Goal{% endif %}
+        </h2>
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            <div><label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Goal Name</label>{{ form.name }}</div>
+            <div class="grid grid-cols-2 gap-4">
+                <div><label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Target ($)</label>{{ form.target_amount }}</div>
+                <div><label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Current ($)</label>{{ form.current_amount }}</div>
+            </div>
+            <div><label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Target Date</label>{{ form.deadline }}</div>
+            <div class="flex space-x-3 mt-6">
+                <a href="{% url 'savings' %}" class="flex-1 bg-gray-100 text-gray-600 py-3 rounded-lg text-center font-bold text-sm">Cancel</a>
+                <button type="submit" class="flex-1 bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition shadow-md font-bold text-sm">Save Goal</button>
+            </div>
+        </form>
+    </div>
+</div>
+<style>
+    input[type="text"], input[type="number"], input[type="date"] {
+        width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; outline: none; background-color: #f9fafb;
+    }
+    input:focus { border-color: #9333ea; background-color: #fff; }
+</style>
+{% endblock %}

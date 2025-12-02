@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Manage Categories</h2>
+        <a href="{% url 'dashboard' %}" class="text-blue-600 hover:underline text-sm font-medium">Back to Dashboard</a>
+    </div>
+
+    <!-- Add Category Form -->
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8 animate__animated animate__fadeInDown">
+        <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-4">Add New Category</h4>
+        <form method="post" class="flex gap-4">
+            {% csrf_token %}
+            <div class="flex-grow">
+                {{ form.name }}
+            </div>
+            <button type="submit" class="bg-gray-800 text-white px-6 rounded-lg hover:bg-gray-900 transition shadow-md font-bold text-sm">Add</button>
+        </form>
+    </div>
+
+    <!-- Category List -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate__animated animate__fadeInUp">
+        <div class="p-4 border-b border-gray-50 bg-gray-50">
+            <h4 class="text-xs font-bold text-gray-600 uppercase">Your Categories</h4>
+        </div>
+        <div class="divide-y divide-gray-100">
+            {% for cat in categories %}
+            <div class="p-4 flex justify-between items-center hover:bg-gray-50 transition">
+                <span class="text-gray-700 font-medium">{{ cat.name }}</span>
+                <form action="{% url 'delete_category' cat.id %}" method="post" onsubmit="return confirm('Delete this category? Transactions will become uncategorized.');">
+                    {% csrf_token %}
+                    <button type="submit" class="text-gray-400 hover:text-red-500 transition px-2">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </form>
+            </div>
+            {% empty %}
+            <div class="p-6 text-center text-gray-400">No categories found.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    input[type="text"] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.5rem;
+        outline: none;
+        background-color: #f9fafb;
+    }
+    input:focus { border-color: #2563eb; background-color: #fff; }
+</style>
+{% endblock %}

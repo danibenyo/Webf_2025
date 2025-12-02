@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">Staff Panel: User Management</h2>
+    <span class="bg-gray-800 text-white px-3 py-1 rounded-full text-xs font-bold uppercase">Superuser Access</span>
+</div>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate__animated animate__fadeInUp">
+    <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Username</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Email</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+            {% for u in users %}
+            <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="font-bold text-gray-900">{{ u.username }}</div>
+                    {% if u.is_superuser %}<span class="text-xs text-blue-600 font-bold">Admin</span>{% endif %}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ u.email }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    {% if u.is_active %}
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                    {% else %}
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inactive</span>
+                    {% endif %}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <a href="{% url 'admin_user_edit' u.id %}" class="text-indigo-600 hover:text-indigo-900 mr-4">Edit</a>
+                    {% if u != request.user %}
+                    <form action="{% url 'admin_user_delete' u.id %}" method="post" class="inline" onsubmit="return confirm('Delete this user? This will wipe all their data.');">
+                        {% csrf_token %}
+                        <button class="text-red-600 hover:text-red-900">Delete</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

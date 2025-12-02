@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="flex justify-center items-center h-[calc(100vh-140px)]">
+    <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-sm border border-gray-100 animate__animated animate__fadeInUp">
+        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Edit User: {{ target_user.username }}</h2>
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            <div><label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Username</label>{{ form.username }}</div>
+            <div><label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Email</label>{{ form.email }}</div>
+            <div class="flex items-center mt-4">
+                {{ form.is_active }} 
+                <label class="ml-2 text-sm text-gray-700 font-bold">Active Account</label>
+            </div>
+            <div class="flex space-x-3 mt-6">
+                <a href="{% url 'admin_user_list' %}" class="flex-1 bg-gray-100 text-gray-600 py-3 rounded-lg text-center font-bold text-sm">Cancel</a>
+                <button type="submit" class="flex-1 bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition shadow-md font-bold text-sm">Update User</button>
+            </div>
+        </form>
+    </div>
+</div>
+<style>
+    input[type="text"], input[type="email"] { width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; outline: none; background-color: #f9fafb; }
+    input:focus { border-color: #374151; background-color: #fff; }
+    input[type="checkbox"] { width: 1.25rem; height: 1.25rem; }
+</style>
+{% endblock %}

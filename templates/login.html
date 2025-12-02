@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="flex justify-center items-center h-[calc(100vh-200px)]">
+    <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-sm border border-gray-100 animate__animated animate__fadeInUp">
+        <h2 class="text-2xl font-bold mb-2 text-center text-gray-800">
+            {% if '/login' in request.path %}Welcome Back{% else %}Join Webf_2025{% endif %}
+        </h2>
+        
+        <form method="post" class="space-y-4 mt-6">
+            {% csrf_token %}
+            {% for field in form %}
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md hover:shadow-lg mt-4 font-bold text-sm">
+                {% if '/login' in request.path %}Login{% else %}Create Account{% endif %}
+            </button>
+        </form>
+    </div>
+</div>
+<style>
+    input[type="text"], input[type="password"], input[type="email"] {
+        width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; outline: none; background-color: #f9fafb;
+    }
+    input:focus { border-color: #2563eb; background-color: #fff; }
+</style>
+{% endblock %}

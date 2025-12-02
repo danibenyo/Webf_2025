@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 fade-in-up">
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 group">
+        <p class="text-gray-500 text-xs font-bold uppercase">Balance</p>
+        <h3 class="text-3xl font-bold text-gray-800 mt-2">{{ user.userprofile.currency }} {{ balance }}</h3>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 group">
+        <p class="text-gray-500 text-xs font-bold uppercase">Income</p>
+        <h3 class="text-3xl font-bold text-green-600 mt-2">+ {{ user.userprofile.currency }} {{ total_income }}</h3>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 group">
+        <p class="text-gray-500 text-xs font-bold uppercase">Expenses</p>
+        <h3 class="text-3xl font-bold text-red-500 mt-2">- {{ user.userprofile.currency }} {{ total_expense }}</h3>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-1 fade-in-up" style="animation-delay: 0.1s;">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-full">
+            <h4 class="text-lg font-bold text-gray-800 mb-6">Spending Breakdown</h4>
+            <div class="relative h-64 w-full"><canvas id="expenseChart"></canvas></div>
+            <div class="mt-6"><a href="{% url 'export_csv' %}" class="block w-full text-center bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-900 transition text-sm font-medium">Download CSV</a></div>
+        </div>
+    </div>
+
+    <div class="lg:col-span-2 fade-in-up" style="animation-delay: 0.2s;">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-6 border-b border-gray-50 flex justify-between items-center">
+                <h4 class="text-lg font-bold text-gray-800">Recent Transactions</h4>
+                <a href="{% url 'add_transaction' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700">Add New</a>
+            </div>
+            
+            {% if transactions %}
+            <div class="divide-y divide-gray-50">
+                {% for t in transactions %}
+                <div class="p-4 flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center 
+                            {% if t.transaction_type == 'INCOME' %} bg-green-100 text-green-600 {% else %} bg-red-100 text-red-600 {% endif %}">
+                            <i class="fa-solid {% if t.transaction_type == 'INCOME' %}fa-arrow-down{% else %}fa-arrow-up{% endif %}"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-800">{{ t.title }}</p>
+                            <span class="text-xs text-gray-400">{{ t.date }} • {{ t.category.name|default:"Uncategorized" }}</span>
+                        </div>
+                    </div>
+                    <span class="font-bold {% if t.transaction_type == 'INCOME' %} text-green-600 {% else %} text-red-500 {% endif %}">
+                        {% if t.transaction_type == 'INCOME' %}+{% else %}-{% endif %} {{ user.userprofile.currency }} {{ t.amount }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="p-8 text-center text-gray-400">No transactions yet.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    const ctx = document.getElementById('expenseChart').getContext('2d');
+    const labels = {{ chart_labels|safe }};
+    const data = {{ chart_data|safe }};
+    if (data.length === 0) {
+        ctx.font = "14px 'DM Sans'"; ctx.fillStyle = "#9ca3af"; ctx.textAlign = "center"; ctx.fillText("No expense data", 150, 75);
+    } else {
+        new Chart(ctx, { type: 'doughnut', data: { labels: labels, datasets: [{ data: data, backgroundColor: ['#fca5a5', '#fdba74', '#fde047', '#86efac', '#67e8f9', '#c4b5fd'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { family: "'DM Sans'", size: 11 } } } } } });
+    }
+</script>
+{% endblock %}
